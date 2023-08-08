@@ -19,20 +19,6 @@ function getPatchedSource(tsModule, options) {
     const { backupCachePaths, patchedCachePaths } = tsModule;
     const { log, skipCache } = options || {};
     const skipBackup = process.env.TSP_SKIP_BACKUP === 'true';
-    /* Write backup if not patched */
-    if (!tsModule.isPatched && !skipBackup) {
-        for (const [key, backupPath] of Object.entries(backupCachePaths)) {
-            const srcPath = key === 'dts' ? tsModule.dtsPath : tsModule.modulePath;
-            if (key === 'dts' && options?.skipDts)
-                continue;
-            if (!srcPath)
-                continue;
-            log?.(['~', `Writing backup cache to ${chalk_1.default.blueBright(backupPath)}`], system_1.LogLevel.verbose);
-            const cacheDir = path_1.default.dirname(backupPath);
-            (0, utils_1.mkdirIfNotExist)(cacheDir);
-            (0, utils_1.copyFileWithLock)(srcPath, backupPath);
-        }
-    }
     /* Get Patched Module */
     const canUseCache = !skipCache
         && !tsModule.moduleFile.patchDetail?.isOutdated
